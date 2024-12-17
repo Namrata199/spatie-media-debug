@@ -1,3 +1,5 @@
 <div>
-   {{$this->form}}
+    <form wire:submit.prevent="save">
+        {{ $this->form }} 
+    </form>
 </div>
