@@ -40,6 +40,8 @@ class UserProfile extends Component implements HasForms
         $this->showPrompt = false;
         if ($this->selectedUserId) {
             $this->data['data']['media'] = $this->user->getMedia('users')->pluck('uuid', 'uuid')->toArray();
+            $this->data['data']['name'] = $this->user->name;
+
         }
     }
 
@@ -48,7 +50,7 @@ class UserProfile extends Component implements HasForms
         if (isset($this->data['data']['media']) && is_array($this->data['data']['media'])) {
             foreach ($this->data['data']['media'] as $file) {
                 if ($file instanceof TemporaryUploadedFile) {
-                    $user->addMediaFromDisk($file->getRealPath())->toMediaCollection('users');
+                    $user->addMedia($file->getRealPath())->toMediaCollection('users');
                 }
             }
         }
@@ -66,7 +68,16 @@ class UserProfile extends Component implements HasForms
                         ->schema([
                             SpatieMediaLibraryFileUpload::make('data.media')
                                 ->multiple()
-                                ->collection('images'),
+                                ->getUploadedFileUsing(static function (): ?array {
+                                    $user = User::find(1);
+
+                                    $mediaFiles = $user->getMedia('users')->map(function ($media) {
+                                        return ['url' => $media->getUrl()];
+                                    })->toArray();
+
+                                    return $mediaFiles;
+                                })
+                                ->collection('users'),
                         ]),
                     Step::make('Info')
                         ->schema([
