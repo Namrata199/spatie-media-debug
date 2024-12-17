@@ -20,17 +20,16 @@
             display: none !important;
         }
     </style>
+    @filamentStyles
     @livewireStyles
-    @filamentStyle
     @stack('styles')
     @vite('resources/css/app.css')
 </head>
 
 <body {{ $attributes->class(['antialiased font-aeonik']) }}>
     {{ $slot }}
-    @filamentScripts
     @livewireScripts
-    @livewire('notifications')
+    @filamentScripts
     @stack('scripts')
     @vite('resources/js/app.js')
 </body>

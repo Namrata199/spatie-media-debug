@@ -12,16 +12,21 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Livewire\WithFileUploads;
 
 class UserProfile extends Component implements HasForms
 {
-    use InteractsWithForms;
+    use InteractsWithForms, WithFileUploads;
 
     public array $data = [];
 
     public $user;
 
     public array $debugOptions = [];
+
+    public bool $showPrompt = true;
+
+    public $selectedUserId = 1;
 
     public function mount(): void
     {
@@ -32,7 +37,8 @@ class UserProfile extends Component implements HasForms
 
     public function continueEditing(): void
     {
-        if ($this->user) {
+        $this->showPrompt = false;
+        if ($this->selectedUserId) {
             $this->data['data']['media'] = $this->user->getMedia('users')->pluck('uuid', 'uuid')->toArray();
         }
     }
@@ -64,7 +70,7 @@ class UserProfile extends Component implements HasForms
                         ]),
                     Step::make('Info')
                         ->schema([
-                            TextInput::make('name'),
+                            TextInput::make('data.name'),
                         ]),
                 ]),
 
